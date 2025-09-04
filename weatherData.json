@@ -1,0 +1,68 @@
+[
+  {
+    "id": "1757002844417otvn8ju69",
+    "cityName": "Mumbai",
+    "temperature": 32.5,
+    "humidity": 78,
+    "windSpeed": null,
+    "weatherCondition": "Sunny",
+    "country": null,
+    "createdAt": "2025-09-04T16:20:44.417Z",
+    "updatedAt": "2025-09-04T16:20:44.417Z"
+  },
+  {
+    "id": "1757003135309po3of72cl",
+    "cityName": "Indore",
+    "temperature": 17.4,
+    "humidity": 90,
+    "windSpeed": null,
+    "weatherCondition": "rainy",
+    "country": null,
+    "createdAt": "2025-09-04T16:25:35.309Z",
+    "updatedAt": "2025-09-04T16:25:35.309Z"
+  },
+  {
+    "id": "1757003895722b0ojdpcv4",
+    "cityName": "Betul",
+    "temperature": 14,
+    "humidity": 80,
+    "windSpeed": null,
+    "weatherCondition": "rainy",
+    "country": null,
+    "createdAt": "2025-09-04T16:38:15.722Z",
+    "updatedAt": "2025-09-04T16:38:15.722Z"
+  },
+  {
+    "id": "1757003912162mjz9a4d98",
+    "cityName": "Bhopal",
+    "temperature": 12,
+    "humidity": 80,
+    "windSpeed": null,
+    "weatherCondition": "rainy",
+    "country": null,
+    "createdAt": "2025-09-04T16:38:32.162Z",
+    "updatedAt": "2025-09-04T16:38:32.162Z"
+  },
+  {
+    "id": "1757003934292f3w8zhdm1",
+    "cityName": "Delhi",
+    "temperature": 12,
+    "humidity": 80,
+    "windSpeed": null,
+    "weatherCondition": "rainy",
+    "country": null,
+    "createdAt": "2025-09-04T16:38:54.292Z",
+    "updatedAt": "2025-09-04T16:38:54.292Z"
+  },
+  {
+    "id": "1757003979471kciw4bfd1",
+    "cityName": "Bengluru",
+    "temperature": 35,
+    "humidity": 50,
+    "windSpeed": null,
+    "weatherCondition": "sunny",
+    "country": null,
+    "createdAt": "2025-09-04T16:39:39.472Z",
+    "updatedAt": "2025-09-04T16:39:39.472Z"
+  }
+]
