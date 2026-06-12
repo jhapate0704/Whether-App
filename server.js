@@ -391,7 +391,115 @@ app.get('/health', (req, res) => {
         }
     });
 });
+const express = require('express');
+const fs = require('fs');
+const path = require('path');
 
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// Database file path
+const DATABASE_FILE = path.join(__dirname, 'weatherData.json');
+
+// Middleware to parse JSON bodies
+app.use(express.json());
+
+// Initialize database file
+const initializeDatabase = () => {
+    try {
+        if (!fs.existsSync(DATABASE_FILE)) {
+            fs.writeFileSync(DATABASE_FILE, JSON.stringify([], null, 2));
+            console.log('Database file initialized.');
+        }
+    } catch (error) {
+        console.error('Error initializing database:', error.message);
+    }
+};
+
+const readWeatherData = () => {
+    try {
+        const data = fs.readFileSync(DATABASE_FILE, 'utf8');
+        return data ? JSON.parse(data) : [];
+    } catch (error) {
+        return [];
+    }
+};
+
+const writeWeatherData = (data) => {
+    try {
+        fs.writeFileSync(DATABASE_FILE, JSON.stringify(data, null, 2));
+        return true;
+    } catch (error) {
+        return false;
+    }
+};
+
+// Admin authentication middleware (using Headers instead of Query Params)
+const authMiddleware = (req, res, next) => {
+    const apiKey = req.header('x-api-key');
+    if (apiKey === 'masai-secret-key') {
+        next();
+    } else {
+        res.status(403).json({ success: false, message: "Forbidden: Invalid or missing API key." });
+    }
+};
+
+const requestLogger = (req, res, next) => {
+    console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+    next();
+};
+
+app.use(requestLogger);
+
+// Routes
+app.post('/weather', (req, res) => {
+    const { cityName, temperature } = req.body;
+    if (!cityName || temperature === undefined) return res.status(400).json({ success: false, message: "Missing required fields." });
+
+    const weatherData = readWeatherData();
+    if (weatherData.find(c => c.cityName.toLowerCase() === cityName.toLowerCase())) {
+        return res.status(409).json({ success: false, message: "City already exists." });
+    }
+
+    const newRecord = { ...req.body, id: Date.now().toString(), createdAt: new Date().toISOString() };
+    weatherData.push(newRecord);
+    writeWeatherData(weatherData);
+    res.status(201).json({ success: true, data: newRecord });
+});
+
+app.get('/weather', authMiddleware, (req, res) => {
+    res.status(200).json({ success: true, data: readWeatherData() });
+});
+
+app.get('/weather/search', (req, res) => {
+    const { cityName } = req.query;
+    const city = readWeatherData().find(c => c.cityName.toLowerCase() === cityName?.toLowerCase());
+    city ? res.json({ success: true, data: city }) : res.status(404).json({ success: false, message: "Not found" });
+});
+
+app.put('/weather/:id', authMiddleware, (req, res) => {
+    const weatherData = readWeatherData();
+    const index = weatherData.findIndex(c => c.id === req.params.id);
+    if (index === -1) return res.status(404).json({ success: false, message: "Not found" });
+    
+    weatherData[index] = { ...weatherData[index], ...req.body, updatedAt: new Date().toISOString() };
+    writeWeatherData(weatherData);
+    res.status(200).json({ success: true, data: weatherData[index] });
+});
+
+app.delete('/weather/:id', authMiddleware, (req, res) => {
+    let weatherData = readWeatherData();
+    const filtered = weatherData.filter(c => c.id !== req.params.id);
+    if (filtered.length === weatherData.length) return res.status(404).json({ success: false, message: "Not found" });
+    
+    writeWeatherData(filtered);
+    res.status(200).json({ success: true, message: "Deleted successfully" });
+});
+
+initializeDatabase();
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+module.exports = app;
 // 404 handler for undefined routes
 app.use((req, res) => {
     res.status(404).json({
